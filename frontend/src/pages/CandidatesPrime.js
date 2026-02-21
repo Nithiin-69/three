@@ -659,14 +659,23 @@ const CandidateDetailModal = ({ candidate, onClose, getStatusBadge, getScoreBadg
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
-            <PrimeButton onClick={() => console.log('Shortlist')}>
+            <PrimeButton onClick={() => updateCandidateStatus(selectedCandidate._id, 'shortlisted')}>
               Shortlist Candidate
             </PrimeButton>
-            <button className="px-6 py-2.5 rounded-full border border-border hover:bg-elevated transition-colors text-sm font-medium flex items-center gap-2">
+            <button 
+              onClick={() => {
+                setShowDetailModal(false);
+                navigate(`/emails?candidate=${selectedCandidate._id}`);
+              }}
+              className="px-6 py-2.5 rounded-full border border-border hover:bg-elevated hover:border-primary transition-colors text-sm font-medium flex items-center gap-2"
+            >
               <Mail className="w-4 h-4" />
               Send Email
             </button>
-            <button className="px-6 py-2.5 rounded-full border border-border hover:bg-elevated transition-colors text-sm font-medium flex items-center gap-2">
+            <button 
+              onClick={() => navigate(`/calendar`)}
+              className="px-6 py-2.5 rounded-full border border-border hover:bg-elevated transition-colors text-sm font-medium flex items-center gap-2"
+            >
               <Calendar className="w-4 h-4" />
               Schedule Interview
             </button>
