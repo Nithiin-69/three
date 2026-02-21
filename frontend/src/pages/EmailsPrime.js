@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Send, RefreshCw, Copy, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -9,6 +10,7 @@ import MailLoader from '../components/MailLoader';
 import LottieLoader from '../components/LottieLoader';
 
 const EmailsPrime = () => {
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [candidates, setCandidates] = useState([]);
   const [selectedCandidate, setSelectedCandidate] = useState('');
@@ -23,11 +25,20 @@ const EmailsPrime = () => {
   const [interviewDate, setInterviewDate] = useState('');
   const [interviewTime, setInterviewTime] = useState('');
   const [interviewMode, setInterviewMode] = useState('virtual');
-
   const [interviewLocation, setInterviewLocation] = useState('');
+
   useEffect(() => {
     loadCandidates();
   }, []);
+
+  useEffect(() => {
+    // Auto-select candidate from URL parameter
+    const params = new URLSearchParams(location.search);
+    const candidateId = params.get('candidate');
+    if (candidateId && candidates.length > 0) {
+      setSelectedCandidate(candidateId);
+    }
+  }, [location, candidates]);
 
   const loadCandidates = async () => {
     try {
