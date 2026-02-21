@@ -84,7 +84,17 @@ const EmailsPrime = () => {
       toast.success('Email generated successfully!');
     } catch (error) {
       console.error('Failed to generate email:', error);
-      toast.error(error.response?.data?.detail || 'Failed to generate email');
+      
+      // Handle validation errors (array of error objects)
+      if (error.response?.data?.detail && Array.isArray(error.response.data.detail)) {
+        const errorMessages = error.response.data.detail.map(err => err.msg || err).join(', ');
+        toast.error(`Validation error: ${errorMessages}`);
+      } else if (typeof error.response?.data?.detail === 'object') {
+        // Handle object error (shouldn't render object directly)
+        toast.error('Invalid request format. Please check all required fields.');
+      } else {
+        toast.error(error.response?.data?.detail || 'Failed to generate email');
+      }
     } finally {
       setGenerating(false);
     }
