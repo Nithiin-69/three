@@ -91,8 +91,14 @@ const DashboardPrime = () => {
             <p className="text-muted-foreground">Overview of your recruitment pipeline.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={loadDashboardData}>
-              <Activity className="mr-2 h-4 w-4" /> Refresh
+            <Button 
+              variant="outline" 
+              onClick={loadDashboardData}
+              disabled={refreshing}
+              className="hover:border-primary hover:text-primary transition-all"
+            >
+              <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} /> 
+              {refreshing ? 'Refreshing...' : 'Refresh'}
             </Button>
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
               <TrendingUp className="mr-2 h-4 w-4" /> View Reports
