@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Upload, FileText, CheckCircle, AlertCircle, Loader2, X, File,
-  Briefcase, ChevronRight, ArrowRight, Download
-  Upload, FileText, CheckCircle, AlertCircle, Loader2, X, File,
   Briefcase, ChevronRight, ArrowRight, Download, Plus
 } from 'lucide-react';
 import JobFormDialog from '../components/JobFormDialog';
-} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import apiClient from '../utils/api';
