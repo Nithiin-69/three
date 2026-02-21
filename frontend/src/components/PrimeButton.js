@@ -16,7 +16,9 @@ const PrimeButton = ({
       className={`capsule-button-primary ${className}`}
       {...props}
     >
-      {children}
+      <span className="relative z-10 flex items-center justify-center gap-2">
+        {children}
+      </span>
     </button>
   );
 };
