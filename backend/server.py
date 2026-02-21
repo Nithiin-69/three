@@ -115,6 +115,7 @@ class Resume(BaseModel):
     file_type: str  # pdf or docx
     extracted_text: str
     # Enhanced parsed data
+    source: str = "Direct Upload"
     parsed_name: Optional[str] = None
     parsed_email: Optional[str] = None
     parsed_phone: Optional[str] = None
@@ -789,6 +790,7 @@ async def upload_resumes(request: Request, files: List[UploadFile] = File(...)):
             "file_content": file_content_base64,
             "file_type": file_type,
             "extracted_text": extracted_text,
+            "source": "Direct Upload",
             # Parsed data from AI
             "parsed_name": parsed_data.get("name"),
             "parsed_email": parsed_data.get("email"),
@@ -1144,83 +1146,162 @@ async def get_dashboard_analytics(request: Request):
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    # Get all screenings
-    all_screenings = await db.screenings.find(
-        {"user_id": user.user_id},
-        {"_id": 0}
-    ).to_list(length=None)
+    # 1. Total Candidates (Total resumes)
+    total_candidates = await db.resumes.count_documents({"user_id": user.user_id})
     
-    # Status breakdown
+    # Trend (vs last 7 days)
+    seven_days_ago = datetime.now(timezone.utc) - timedelta(days=7)
+    new_candidates_last_7d = await db.resumes.count_documents({
+        "user_id": user.user_id,
+        "created_at": {"$gte": seven_days_ago}
+    })
+    
+    # 2. Active Job Openings
+    active_jobs_count = await db.jobs.count_documents({
+        "user_id": user.user_id,
+        "status": "active"
+    })
+    
+    # 3. Screening Pass Rate (Recommended / Total Screenings)
+    total_screenings_count = await db.screenings.count_documents({"user_id": user.user_id})
+    passed_screenings_count = await db.screenings.count_documents({
+        "user_id": user.user_id,
+        "recommended_action": {"$ne": "Reject"}
+    })
+    pass_rate = round((passed_screenings_count / total_screenings_count * 100), 1) if total_screenings_count > 0 else 0
+    
+    # 4. Time to Hire (Average days from creation to hired status)
+    # Pipeline query to calculate average duration
+    pipeline = [
+        {"$match": {"user_id": user.user_id, "status": "hired"}},
+        {"$project": {
+            "duration": {
+                "$divide": [
+                    {"$subtract": ["$updated_at", "$created_at"]},
+                    1000 * 60 * 60 * 24  # Convert milliseconds to days
+                ]
+            }
+        }},
+        {"$group": {"_id": None, "avg_time_to_hire": {"$avg": "$duration"}}}
+    ]
+    time_to_hire_result = await db.screenings.aggregate(pipeline).to_list(length=1)
+    avg_time_to_hire = round(time_to_hire_result[0]["avg_time_to_hire"], 1) if time_to_hire_result else 0
+    
+    # 5. Upcoming Interviews (Next 3)
+    now = datetime.now(timezone.utc)
+    upcoming_interviews = await db.calendar_events.find(
+        {"user_id": user.user_id, "start_datetime": {"$gte": now}}
+    ).sort("start_datetime", 1).limit(3).to_list(length=3)
+    
+    # 6. Recent Activity Feed (Last 5 actions)
+    # Combine creation of jobs, screenings, and status updates if possible, or just screenings/jobs
+    recent_activity = []
+    
+    # Recent screenings
+    recent_screenings = await db.screenings.find(
+        {"user_id": user.user_id}
+    ).sort("created_at", -1).limit(5).to_list(length=5)
+    
+    for s in recent_screenings:
+        recent_activity.append({
+            "type": "screening",
+            "description": f"Screened candidate {s.get('candidate_name', 'Unknown')}",
+            "timestamp": s.get('created_at'),
+            "id": s.get('screening_id')
+        })
+        
+    # Recent jobs
+    recent_jobs = await db.jobs.find(
+        {"user_id": user.user_id}
+    ).sort("created_at", -1).limit(5).to_list(length=5)
+    
+    for j in recent_jobs:
+        recent_activity.append({
+            "type": "job",
+            "description": f"Created job {j.get('title', 'Unknown')}",
+            "timestamp": j.get('created_at'),
+            "id": j.get('job_id')
+        })
+        
+    # Sort and slice
+    recent_activity.sort(key=lambda x: x['timestamp'], reverse=True)
+    recent_activity = recent_activity[:5]
+    
+    # 7. Candidate Pipeline Funnel
     status_counts = {
         "new": 0,
         "shortlisted": 0,
         "interviewed": 0,
+        "offered": 0,
         "hired": 0,
         "rejected": 0
     }
     
-    for screening in all_screenings:
-        status = screening.get('status', 'new')
+    pipeline_counts = await db.screenings.aggregate([
+        {"$match": {"user_id": user.user_id}},
+        {"$group": {"_id": "$status", "count": {"$sum": 1}}}
+    ]).to_list(length=None)
+    
+    for item in pipeline_counts:
+        status = item["_id"]
         if status in status_counts:
-            status_counts[status] += 1
+            status_counts[status] = item["count"]
+            
+    # 8. Offer Acceptance Rate
+    offers_extended = status_counts["offered"] + status_counts["hired"] + status_counts["rejected"] # Rough approximation if we don't have separate 'offer_rejected' status
+    # Better: Hired / (Hired + Rejected after offer). 
+    # Since we don't track 'rejected after offer', we'll just use Hired / (Hired + Offered) as a proxy for now, or just return 0 if no data.
+    # User asked for "real numbers", so if 0, return 0.
+    offer_acceptance_rate = round((status_counts["hired"] / (status_counts["hired"] + status_counts["offered"]) * 100), 1) if (status_counts["hired"] + status_counts["offered"]) > 0 else 0
     
-    # Calculate average scores
-    total_match_score = 0
-    total_experience_score = 0
-    total_skills_score = 0
-    total_keyword_score = 0
-    count = len(all_screenings)
+    # 9. Candidate Source Breakdown
+    # Aggregate by source from resumes
+    source_breakdown = await db.resumes.aggregate([
+        {"$match": {"user_id": user.user_id}},
+        {"$group": {"_id": "$source", "value": {"$sum": 1}}}
+    ]).to_list(length=None)
     
-    for screening in all_screenings:
-        total_match_score += screening.get('match_score', 0)
-        total_experience_score += screening.get('experience_score', 0)
-        total_skills_score += screening.get('skills_score', 0)
-        total_keyword_score += screening.get('keyword_score', 0)
-    
-    avg_scores = {
-        "match_score": round(total_match_score / count, 1) if count > 0 else 0,
-        "experience_score": round(total_experience_score / count, 1) if count > 0 else 0,
-        "skills_score": round(total_skills_score / count, 1) if count > 0 else 0,
-        "keyword_score": round(total_keyword_score / count, 1) if count > 0 else 0
-    }
-    
-    # Get top performing jobs (by average match score)
-    job_scores = {}
-    for screening in all_screenings:
-        job_id = screening.get('job_id')
-        if job_id:
-            if job_id not in job_scores:
-                job_scores[job_id] = {"total": 0, "count": 0}
-            job_scores[job_id]["total"] += screening.get('match_score', 0)
-            job_scores[job_id]["count"] += 1
+    sources = [{"name": item.get("_id", "Direct Upload") or "Direct Upload", "value": item["value"]} for item in source_breakdown]
+    if not sources:
+        sources = [{"name": "Direct Upload", "value": total_candidates}] if total_candidates > 0 else []
+
+    # 10. Top JDs by Match Score
+    # Existing logic reused/optimized
+    job_scores = await db.screenings.aggregate([
+        {"$match": {"user_id": user.user_id}},
+        {"$group": {
+            "_id": "$job_id",
+            "avg_score": {"$avg": "$match_score"},
+            "count": {"$sum": 1}
+        }},
+        {"$sort": {"avg_score": -1}},
+        {"$limit": 5}
+    ]).to_list(length=5)
     
     top_jobs = []
-    for job_id, data in job_scores.items():
-        avg_score = data["total"] / data["count"]
-        job = await db.jobs.find_one(
-            {"job_id": job_id},
-            {"_id": 0, "title": 1}
-        )
+    for item in job_scores:
+        job = await db.jobs.find_one({"job_id": item["_id"]}, {"title": 1})
         if job:
             top_jobs.append({
-                "job_id": job_id,
-                "job_title": job.get('title', 'Unknown'),
-                "avg_match_score": round(avg_score, 1),
-                "candidate_count": data["count"]
+                "job_title": job.get("title", "Unknown"),
+                "avg_match_score": round(item["avg_score"], 1),
+                "candidate_count": item["count"]
             })
-    
-    top_jobs.sort(key=lambda x: x["avg_match_score"], reverse=True)
-    top_jobs = top_jobs[:5]  # Top 5 jobs
-    
-    # Calculate conversion rate (hired / total)
-    conversion_rate = round((status_counts["hired"] / count * 100), 1) if count > 0 else 0
-    
+            
     return {
-        "total_screenings": count,
-        "status_breakdown": status_counts,
-        "average_scores": avg_scores,
+        "total_candidates": {"count": total_candidates, "trend": new_candidates_last_7d},
+        "active_jobs": active_jobs_count,
+        "screening_pass_rate": pass_rate,
+        "avg_time_to_hire": avg_time_to_hire,
+        "upcoming_interviews": upcoming_interviews,
+        "recent_activity": recent_activity,
+        "pipeline_funnel": status_counts,
+        "offer_acceptance_rate": offer_acceptance_rate,
+        "source_breakdown": sources,
         "top_jobs": top_jobs,
-        "conversion_rate": conversion_rate
+        # Keep old fields for backward compatibility if needed
+        "status_breakdown": status_counts,
+        "conversion_rate": offer_acceptance_rate
     }
 
 
