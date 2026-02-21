@@ -308,60 +308,7 @@ const EmailsPrime = () => {
                         </div>
                       </div>
                     )}
-                              value={interviewTime}
-                              onChange={(e) => setInterviewTime(e.target.value)}
-                              className="w-full px-3 py-2 rounded-xl bg-elevated border border-border focus:border-primary focus:outline-none text-sm"
-                            />
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <label className="block text-xs font-medium text-foreground-secondary mb-2">
-                            Mode
-                          </label>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => setInterviewMode('virtual')}
-                              className={`
-                                flex-1 px-3 py-2 rounded-full text-xs font-medium transition-all duration-200 border
-                                ${interviewMode === 'virtual'
-                                  ? 'bg-primary/10 border-primary text-primary'
-                                  : 'border-border text-foreground-secondary hover:bg-elevated'
-                                }
-                              `}
-                            >
-                              Virtual
-                            </button>
-                            <button
-                              onClick={() => setInterviewMode('in-person')}
-                              className={`
-                                flex-1 px-3 py-2 rounded-full text-xs font-medium transition-all duration-200 border
-                                ${interviewMode === 'in-person'
-                                  ? 'bg-primary/10 border-primary text-primary'
-                                  : 'border-border text-foreground-secondary hover:bg-elevated'
-                                }
-                              `}
-                            >
-                              In-Person
-                            </button>
-                          </div>
-                        </div>
-                        {interviewMode === 'in-person' && (
-                          <div className="mt-4">
-                            <label className="block text-xs font-medium text-foreground-secondary mb-2">
-                              Location
-                            </label>
-                            <input
-                              type="text"
-                              value={interviewLocation}
-                              onChange={(e) => setInterviewLocation(e.target.value)}
-                              placeholder="e.g. 123 Main St, Conference Room A"
-                              className="w-full px-3 py-2 rounded-xl bg-elevated border border-border focus:border-primary focus:outline-none text-sm"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    )}
+
                   </div>
                 </div>
 
