@@ -9,6 +9,7 @@ import JobsPrime from "./pages/JobsPrime";
 import ScreeningPrime from "./pages/ScreeningPrime";
 import EmailsPrime from "./pages/EmailsPrime";
 import CalendarPrime from "./pages/CalendarPrime";
+import ReportsPrime from "./pages/ReportsPrime";
 import History from "./pages/History";
 import { Toaster } from "./components/ui/sonner";
 
@@ -22,6 +23,7 @@ function AppRouter() {
       <Route path="/screening" element={<ScreeningPrime />} />
       <Route path="/emails" element={<EmailsPrime />} />
       <Route path="/calendar" element={<CalendarPrime />} />
+      <Route path="/reports" element={<ReportsPrime />} />
       <Route path="/history" element={<History />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
