@@ -151,21 +151,30 @@ const Candidates = () => {
     );
   };
 
-  // Update candidate status - SMART UPDATE without page refresh
+  // Update candidate status - SMART UPDATE without page refresh - PER CANDIDATE
   const updateCandidateStatus = async (candidateId, newStatus) => {
-    // Store original status for rollback
+    // Prevent duplicate updates
+    if (updatingCandidates.has(candidateId)) {
+      return;
+    }
+    
+    // Store original candidates for rollback
     const originalCandidates = [...candidates];
     
     try {
-      setUpdatingStatus(true);
+      // Mark this candidate as updating
+      setUpdatingCandidates(prev => new Set(prev).add(candidateId));
       
-      // 1. OPTIMISTIC UPDATE - Update UI immediately
+      // 1. OPTIMISTIC UPDATE - Update UI immediately for THIS candidate only
       setCandidates(prevCandidates => 
-        prevCandidates.map(candidate => 
-          candidate._id === candidateId 
-            ? { ...candidate, status: newStatus }
-            : candidate
-        )
+        prevCandidates.map(candidate => {
+          // Only update the specific candidate
+          if (candidate._id === candidateId) {
+            console.log(`Updating candidate ${candidateId} from ${candidate.status} to ${newStatus}`);
+            return { ...candidate, status: newStatus };
+          }
+          return candidate;
+        })
       );
       
       // 2. Update backend
@@ -182,7 +191,12 @@ const Candidates = () => {
       setCandidates(originalCandidates);
       toast.error(error.response?.data?.detail || 'Failed to update status');
     } finally {
-      setUpdatingStatus(false);
+      // Remove from updating set
+      setUpdatingCandidates(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(candidateId);
+        return newSet;
+      });
     }
   };
 
