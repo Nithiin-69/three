@@ -24,6 +24,7 @@ const EmailsPrime = () => {
   const [interviewTime, setInterviewTime] = useState('');
   const [interviewMode, setInterviewMode] = useState('virtual');
 
+  const [interviewLocation, setInterviewLocation] = useState('');
   useEffect(() => {
     loadCandidates();
   }, []);
@@ -72,6 +73,9 @@ const EmailsPrime = () => {
       if (emailStage === 'interview') {
         payload.interview_datetime = `${interviewDate}T${interviewTime}`;
         payload.interview_mode = interviewMode;
+        if (interviewLocation) {
+          payload.interview_location = interviewLocation;
+        }
       }
 
       const response = await apiClient.post('/emails/generate-draft', payload);
