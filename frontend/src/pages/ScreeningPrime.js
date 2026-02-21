@@ -308,6 +308,7 @@ const ScreeningPrime = () => {
                                       Match: {result.match_score}%
                                     </Badge>
                                   </div>
+                                </div>
                               </div>
                               <Button 
                                 variant="ghost" 
