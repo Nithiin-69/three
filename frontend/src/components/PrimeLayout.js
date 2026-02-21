@@ -115,7 +115,7 @@ const PrimeLayout = ({ children }) => {
                   w-full rounded-full px-4 py-3 flex items-center gap-3
                   transition-all duration-200 group relative
                   ${active 
-                    ? 'bg-elevated text-foreground border-2 border-primary' 
+                    ? 'bg-elevated text-foreground border-2 border-primary dark:border-[#D4AF37]' 
                     : 'text-foreground-secondary hover:text-foreground hover:bg-elevated border-2 border-transparent'
                   }
                   ${collapsed ? 'justify-center' : ''}
