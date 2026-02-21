@@ -285,6 +285,20 @@ const EmailsPrime = () => {
                             </button>
                           </div>
                         </div>
+                        {interviewMode === 'in-person' && (
+                          <div className="mt-4">
+                            <label className="block text-xs font-medium text-foreground-secondary mb-2">
+                              Location
+                            </label>
+                            <input
+                              type="text"
+                              value={interviewLocation}
+                              onChange={(e) => setInterviewLocation(e.target.value)}
+                              placeholder="e.g. 123 Main St, Conference Room A"
+                              className="w-full px-3 py-2 rounded-xl bg-elevated border border-border focus:border-primary focus:outline-none text-sm"
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
