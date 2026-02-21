@@ -38,9 +38,10 @@ const JobsPrime = () => {
     }
   };
 
-  const openModal = (job = null) => {
+  const openModal = (job = null, isViewMode = false) => {
     if (job) {
       setEditingJob(job);
+      setViewMode(isViewMode);
       setFormData({
         title: job.title,
         description: job.description,
@@ -49,6 +50,7 @@ const JobsPrime = () => {
       });
     } else {
       setEditingJob(null);
+      setViewMode(false);
       setFormData({
         title: '',
         description: '',
@@ -62,7 +64,14 @@ const JobsPrime = () => {
   const closeModal = () => {
     setShowModal(false);
     setEditingJob(null);
+    setViewMode(false);
     setFormData({
+      title: '',
+      description: '',
+      requirements: '',
+      status: 'active'
+    });
+  };
       title: '',
       description: '',
       requirements: '',
