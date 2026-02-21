@@ -161,11 +161,22 @@ const Candidates = () => {
         status: newStatus
       });
       
+      // Immediately update local state for instant UI feedback
+      setCandidates(prevCandidates => 
+        prevCandidates.map(c => 
+          c._id === candidateId ? { ...c, status: newStatus } : c
+        )
+      );
+      
       toast.success(`Status updated to ${newStatus}`);
-      loadData(); // Reload ALL data to reflect changes everywhere
+      
+      // Then reload to ensure consistency
+      await loadData();
     } catch (error) {
       console.error('Status update failed:', error);
       toast.error(error.response?.data?.detail || 'Failed to update status');
+      // Reload on error to revert to correct state
+      await loadData();
     } finally {
       setUpdatingStatus(false);
     }
