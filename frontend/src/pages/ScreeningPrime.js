@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { 
   Upload, FileText, CheckCircle, AlertCircle, Loader2, X, File,
   Briefcase, ChevronRight, ArrowRight, Download
+  Upload, FileText, CheckCircle, AlertCircle, Loader2, X, File,
+  Briefcase, ChevronRight, ArrowRight, Download, Plus
+} from 'lucide-react';
+import JobFormDialog from '../components/JobFormDialog';
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -11,6 +15,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Progress } from '../components/ui/progress';
+  const [showJobModal, setShowJobModal] = useState(false);
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 
@@ -156,18 +161,28 @@ const ScreeningPrime = () => {
                 {/* Job Selection */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Job Description</label>
-                  <Select value={selectedJob} onValueChange={setSelectedJob}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a job..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {jobs.map(job => (
-                        <SelectItem key={job.job_id} value={job.job_id}>
-                          {job.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select value={selectedJob} onValueChange={setSelectedJob}>
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder="Select a job..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {jobs.map(job => (
+                          <SelectItem key={job.job_id} value={job.job_id}>
+                            {job.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      onClick={() => setShowJobModal(true)}
+                      title="Create New Job"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
 
                 {/* File Upload Area */}
@@ -353,3 +368,11 @@ const ScreeningPrime = () => {
 };
 
 export default ScreeningPrime;
+      <JobFormDialog 
+        open={showJobModal} 
+        onOpenChange={setShowJobModal} 
+        onSaved={() => {
+          setShowJobModal(false);
+          loadJobs();
+        }} 
+      />
