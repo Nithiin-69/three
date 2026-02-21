@@ -444,6 +444,7 @@ const Candidates = () => {
                       <td className="px-6 py-4">
                         <div className="relative">
                           <select
+                            key={`status-${candidate._id}-${candidate.status}`}
                             value={candidate.status}
                             onChange={(e) => updateCandidateStatus(candidate._id, e.target.value)}
                             disabled={updatingStatus}
