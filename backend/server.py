@@ -290,10 +290,18 @@ async def screen_resume_with_ai(resume_text: str, job_data: dict) -> dict:
         }
     
     try:
-        # Build comprehensive prompt for STRICT ATS-style analysis
-        prompt = f"""You are an EXCEPTIONALLY STRICT expert ATS (Applicant Tracking System) and senior HR recruiter with 15+ years of experience. Analyze this resume against the job description using VERY STRICT ATS-style evaluation.
+        # Build comprehensive prompt for detailed ATS-style analysis
+        prompt = f"""You are an expert ATS (Applicant Tracking System) analyst and senior technical recruiter 
+with 15+ years of experience evaluating candidates across industries. Your job is to 
+perform a deep, honest, and unbiased analysis of a resume against a job description.
 
-JOB DESCRIPTION:
+You do NOT inflate scores to make candidates feel good. You score based on EVIDENCE 
+found in the resume — not assumptions or potential.
+
+---
+
+## JOB DESCRIPTION
+
 Title: {job_data['title']}
 Department: {job_data.get('department', 'N/A')}
 Experience Level Required: {job_data['experience_level']}
@@ -308,52 +316,109 @@ REQUIRED QUALIFICATIONS:
 NICE-TO-HAVE QUALIFICATIONS:
 {chr(10).join(f"- {skill}" for skill in job_data.get('nice_to_have', []))}
 
-RESUME:
+---
+
+## RESUME
+
 {resume_text}
 
-⚠️ CRITICAL SCORING GUIDELINES - BE EXTREMELY STRICT:
+---
 
-SCORE DISTRIBUTION (Use the FULL range 0-100):
-- 90-100: EXCEPTIONAL candidate - Exceeds ALL requirements significantly, rare top-tier talent
-- 80-89: STRONG candidate - Meets ALL requirements + some nice-to-haves, clearly qualified
-- 70-79: GOOD candidate - Meets MOST requirements, minor gaps acceptable
-- 60-69: ADEQUATE candidate - Meets SOME requirements, noticeable gaps
-- 50-59: WEAK candidate - Barely meets minimum, significant concerns
-- 40-49: POOR candidate - Many gaps, questionable fit
-- 0-39: UNQUALIFIED - Does not meet basic requirements
+## SCORING DIMENSIONS
 
-STRICT EVALUATION RULES:
-1. Missing even ONE required qualification should DROP score by 15-20 points
-2. Wrong experience level (e.g., Junior applying for Senior) should cap match_score at 60
-3. Lack of specific technologies/skills mentioned in JD should DROP skills_score by 10-15 points EACH
-4. Generic or weak experience descriptions should be penalized heavily
-5. Career gaps or job hopping should reduce experience_score by 10-20 points
-6. NO candidate should score 85+ unless they are TRULY EXCEPTIONAL and exceed requirements
-7. Average candidates should score 55-70 range
-8. Only give 80+ if candidate demonstrably exceeds most requirements with proof
+### 1. Skills Alignment (Weight: 25%)
+- Split skills into: Must-Have (required) vs Nice-to-Have (preferred) from the JD.
+- Score Must-Have skills at 2x weight vs Nice-to-Have.
+- Check if skills are demonstrated in context (projects, work experience) vs just listed.
+- Penalize vague skill claims with no supporting evidence anywhere in the resume.
+- A skill that is listed but never shown in action = 50% credit only.
 
-Provide analysis in this JSON format:
+### 2. Experience Relevance (Weight: 20%)
+- Compare years of experience required vs years the candidate has (overall + domain-specific).
+- Evaluate role similarity: same title, adjacent title, or unrelated title.
+- Assess responsibilities overlap: what % of the JD responsibilities are reflected 
+  in their work history.
+- Check seniority alignment (junior resume for senior role = significant penalty).
+- Evaluate recency: relevant experience from 5+ years ago counts less than recent experience.
+
+### 3. Keyword Match (Weight: 20%)
+- Extract all hard keywords from the JD: tools, technologies, methodologies, domain terms.
+- Check how many appear VERBATIM or as close synonyms in the resume.
+- Check keyword placement quality: title > skills section > experience > projects > certifications.
+- Penalize if keywords are stuffed without context (listed but never demonstrated).
+- Score: (matched keywords / total required keywords) × 100, adjusted for placement quality.
+
+### 4. Project Relevance (Weight: 20%)
+- Evaluate listed projects for domain relevance, tech stack match, and complexity.
+- Heavily reward projects that directly mirror the responsibilities or tech in the JD.
+- Check if project outcomes and impact are quantified (numbers, scale, performance gains).
+- Penalize projects that are generic tutorials, clones, or completely unrelated to the role.
+- Bonus: production-scale projects, open-source contributions, or published/deployed work.
+- A project that matches the JD domain AND tech stack = high impact on this dimension.
+
+### 5. Certifications & Education (Weight: 15%)
+- Check if required degree/field matches the JD expectation.
+- Give strong weight to certifications that are explicitly mentioned or implied in the JD.
+- Reward certifications that are industry-recognized and directly relevant to the role.
+- Bonus: multiple relevant certifications, recent certifications (within 3 years).
+- If JD has no strict education requirement, shift more weight toward certifications.
+- Penalize outdated or completely irrelevant certifications.
+
+---
+
+## SCORING RULES
+
+- Be STRICT. A 90+ score means the candidate is nearly a perfect fit — this should be rare.
+- A score of 70–80 = strong match with a few gaps.
+- A score of 50–69 = moderate match, noticeable gaps.
+- A score below 50 = weak match, major misalignment.
+- Never round up generously. If evidence is missing, the points are not awarded.
+- If the candidate claims a skill but never demonstrates it anywhere, count it as 50% credit.
+- If a Must-Have requirement from the JD is completely missing, cap the total score at 74 
+  regardless of other strengths.
+
+---
+
+## SCORE CALIBRATION
+
+| Score Range | What it Means                                                         |
+|-------------|-----------------------------------------------------------------------|
+| 90–100      | Near-perfect fit. Almost every requirement met with evidence.         |
+| 80–89       | Strong fit. Most must-haves met, minor gaps in nice-to-haves only.   |
+| 70–79       | Good fit. Clear strengths but 1–2 must-haves are weak or missing.    |
+| 50–69       | Moderate fit. Several gaps across multiple dimensions.                |
+| 30–49       | Weak fit. Significant misalignment in core areas.                    |
+| Below 30    | Poor fit. Resume and JD are largely misaligned.                      |
+
+### Anti-Sandbagging Rules:
+- If a resume satisfies ALL must-have skills with demonstrated evidence → Skills dimension must score 85+.
+- If every required keyword appears in context → Keyword score must be 85+.
+- If the candidate's projects directly match the JD tech stack and domain → Project score must be 80+.
+- A resume that meets all must-haves + most nice-to-haves + has relevant projects 
+  + relevant certifications MUST score 85–95.
+
+### Anti-Inflation Rules:
+- If a must-have requirement is missing from the resume, the total score cannot exceed 74.
+- A skill listed once with zero supporting context = 50% credit only.
+- Do not award points for potential or how the resume "feels." Evidence only.
+
+---
+
+Return ONLY valid JSON in this EXACT format:
 {{
-    "match_score": <0-100, STRICT overall match - most candidates should be 50-75>,
-    "experience_score": <0-100, STRICT experience evaluation>,
-    "skills_score": <0-100, STRICT skills match - penalize missing required skills heavily>,
-    "keyword_score": <0-100, STRICT keyword density check>,
-    "summary": "<2-3 sentence HONEST overview - mention gaps clearly>",
+    "match_score": <0-100 integer>,
+    "experience_score": <0-100 integer>,
+    "skills_score": <0-100 integer>,
+    "keyword_score": <0-100 integer>,
+    "summary": "<2-3 sentence honest overview>",
     "strengths": ["<strength 1>", "<strength 2>", "<strength 3>"],
     "gaps": ["<gap 1>", "<gap 2>", "<gap 3>"],
     "key_highlights": ["<highlight 1>", "<highlight 2>", "<highlight 3>"],
     "recommended_action": "<Interview|Maybe|Reject>",
-    "detailed_analysis": "<HONEST paragraph - be critical, mention gaps and concerns>"
+    "detailed_analysis": "<Honest paragraph with evidence>"
 }}
 
-Focus on STRICT evaluation:
-1. Count EXACT keyword matches - partial matches don't count
-2. Verify experience level EXACTLY matches requirement
-3. Check for ALL required skills - missing any? Penalize heavily
-4. Evaluate quality of achievements - vague descriptions = low score
-5. Check education requirements - missing degree? Penalize
-
-BE CRITICAL. BE STRICT. Most candidates should score 50-75. Only truly exceptional candidates deserve 80+. Return ONLY valid JSON."""
+BE CRITICAL. BE STRICT. Score based on evidence only. Return ONLY valid JSON."""
 
         response = groq_client.chat.completions.create(
             model='llama-3.3-70b-versatile',
