@@ -1,0 +1,602 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   PrimeHire Design System v3.0
+   "Prime Talent Only. We Do the Dirty Work So You Stay the Nice Recruiter."
+   Gold/Silver Dark Theme | Soft Pastel Light Theme
+   ============================================ */
+
+@layer base {
+  :root {
+    /* ===== LIGHT THEME - Soft Pastels ONLY (No Gold) ===== */
+    /* Background: Airy, light, breathable */
+    --background: 0 0% 99%;
+    --surface: 0 0% 100%;
+    --elevated: 240 10% 98%;
+    --overlay: 0 0% 100%;
+    
+    /* Soft Pastel Palette - Muted & Airy */
+    --pastel-pink: 340 75% 88%;
+    --pastel-orange: 25 85% 85%;
+    --pastel-blue: 210 70% 88%;
+    --pastel-purple: 270 65% 88%;
+    --pastel-violet: 280 60% 85%;
+    --pastel-green: 145 60% 85%;
+    
+    /* Primary: Soft Blue (NO GOLD IN LIGHT MODE) */
+    --primary: 210 70% 75%;
+    --primary-foreground: 210 90% 25%;
+    
+    /* Accent: Soft Violet */
+    --accent: 270 65% 75%;
+    --accent-foreground: 270 80% 25%;
+    
+    /* Text */
+    --foreground: 220 20% 15%;
+    --foreground-secondary: 220 15% 40%;
+    --foreground-muted: 220 10% 60%;
+    
+    /* Borders */
+    --border: 220 15% 90%;
+    --border-subtle: 220 10% 95%;
+    
+    /* Status Colors - Soft */
+    --success: 145 60% 75%;
+    --warning: 40 90% 75%;
+    --danger: 0 70% 80%;
+    
+    /* Glassmorphism Light */
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-shadow: 0 8px 32px rgba(100, 90, 160, 0.08);
+    
+    --radius: 1rem;
+  }
+  
+  .dark {
+    /* ===== DARK THEME - Gold & Silver Only ===== */
+    /* Deep, premium, AI-native */
+    
+    /* Backgrounds - Near black with blue undertone */
+    --background: 225 30% 6%;          /* #0A0A0F */
+    --surface: 225 25% 10%;            /* #111118 */
+    --elevated: 225 20% 14%;           /* #1A1A24 */
+    --overlay: 225 18% 18%;            /* #22222F */
+    
+    /* Gold & Silver Palette */
+    --gold: 45 80% 60%;                /* #D4AF37 */
+    --gold-dark: 45 70% 45%;           /* #B8860B */
+    --silver: 0 0% 75%;                /* #C0C0C0 */
+    --silver-dark: 0 0% 60%;           /* #999999 */
+    
+    /* Primary: Gold */
+    --primary: 45 80% 60%;
+    --primary-foreground: 225 30% 6%;
+    
+    /* Accent: Electric Violet (for diversity) */
+    --accent: 262 83% 58%;
+    --accent-foreground: 210 17% 98%;
+    
+    /* Text - Silver tones */
+    --foreground: 210 17% 98%;         /* #F8F8FF */
+    --foreground-secondary: 225 10% 65%; /* #9B9BB4 */
+    --foreground-muted: 225 10% 45%;   /* #5C5C7A */
+    
+    /* Borders - Subtle */
+    --border: 225 20% 18%;
+    --border-subtle: 225 15% 12%;
+    
+    /* Status Colors - Neon glow */
+    --success: 142 76% 45%;            /* #10B981 */
+    --warning: 38 92% 50%;             /* #F59E0B */
+    --danger: 0 84% 60%;               /* #EF4444 */
+    
+    /* Glassmorphism Dark */
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    font-variation-settings: 'opsz' 32;
+  }
+}
+
+/* ============================================
+   GLASSMORPHISM SYSTEM
+   ============================================ */
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.dark .glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(212, 175, 55, 0.15);
+}
+
+.dark .glass-card:hover {
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(212, 175, 55, 0.2);
+}
+
+/* Glass card without hover (for dialogs/modals) */
+.glass-card-static {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Frosted panels (sidebars, nav, modals) */
+.frosted-panel {
+  background: rgba(248, 247, 255, 0.85);
+  backdrop-filter: blur(40px) saturate(150%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark .frosted-panel {
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================
+   CAPSULE DESIGN LANGUAGE - FIXED BUTTONS
+   ============================================ */
+
+/* ALL BUTTONS - Force inline layout */
+button, .button, .capsule-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  white-space: nowrap !important;
+}
+
+/* Light Mode Buttons - Borders only with soft glow */
+button, .button {
+  background-color: transparent;
+  color: hsl(var(--foreground));
+  border: 1.5px solid hsl(var(--border));
+  transition: all 0.3s ease;
+}
+
+button:hover, .button:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 12px hsla(var(--primary) / 0.3);
+  background-color: transparent;
+}
+
+/* Dark mode - fill buttons */
+.dark button, .dark .button {
+  background-color: hsl(var(--elevated));
+  border-color: hsl(var(--border));
+}
+
+.dark button:hover, .dark .button:hover {
+  background-color: hsl(var(--surface));
+  border-color: hsl(var(--primary));
+}
+
+/* Capsule Primary Button - GOLD GRADIENT IN DARK MODE */
+.capsule-button-primary {
+  position: relative;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: 0.625rem 1.5rem;
+  border: none;
+  border-radius: 9999px;
+  font-weight: 600;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap !important;
+  transition: all 1s ease;
+}
+
+/* Light mode - simple primary color */
+.capsule-button-primary {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: 1.5px solid hsl(var(--primary));
+}
+
+.capsule-button-primary:hover {
+  opacity: 0.9;
+  box-shadow: 0 0 16px hsla(var(--primary) / 0.4);
+}
+
+/* Dark mode - GOLD GRADIENT */
+.dark .capsule-button-primary {
+  background: linear-gradient(to right, #77530a, #ffd277, #77530a, #77530a, #ffd277, #77530a);
+  background-size: 250%;
+  background-position: left;
+  color: #ffd277;
+  border: none;
+}
+
+.dark .capsule-button-primary::before {
+  position: absolute;
+  content: "";
+  inset: 0;
+  margin: 2px;
+  border-radius: 9999px;
+  background-color: rgba(0, 0, 0, 0.842);
+  z-index: 0;
+}
+
+.dark .capsule-button-primary:hover {
+  background-position: right;
+}
+
+.capsule-button-primary > * {
+  position: relative;
+  z-index: 1;
+}
+
+.capsule-button-primary:active {
+  transform: scale(0.95);
+}
+
+/* Capsule with gold gradient border on hover */
+.capsule-hover {
+  @apply rounded-full transition-all duration-300;
+  border: 1px solid transparent;
+  background-image: linear-gradient(hsl(var(--surface)), hsl(var(--surface))), 
+                    linear-gradient(135deg, #D4AF37, #C0C0C0);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.dark .capsule-hover:hover {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Status capsules */
+.capsule-status {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium;
+}
+
+/* Filter capsules */
+.capsule-filter {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium cursor-pointer transition-all duration-200;
+}
+
+.capsule-filter.active {
+  background: linear-gradient(135deg, #D4AF37, #C0C0C0);
+  color: hsl(var(--background));
+}
+
+/* Score badge - Gradient based on score */
+.score-badge {
+  @apply inline-flex items-center justify-center rounded-full w-12 h-12 font-bold text-sm;
+}
+
+/* ============================================
+   GOLD/SILVER GRADIENTS
+   ============================================ */
+
+.gradient-gold-silver {
+  background: linear-gradient(135deg, #D4AF37 0%, #C0C0C0 50%, #B8860B 100%);
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #D4AF37, #FFD700, #B8860B);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gradient-gold {
+  border: 1px solid transparent;
+  background-image: linear-gradient(hsl(var(--background)), hsl(var(--background))), 
+                    linear-gradient(135deg, #D4AF37, #C0C0C0, #B8860B);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+/* Neon glow effects - Dark mode only */
+.dark .glow-gold {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), 0 0 40px rgba(192, 192, 192, 0.2);
+}
+
+.dark .glow-violet {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+}
+
+.dark .glow-green {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--surface)) 0%,
+    hsl(var(--elevated)) 50%,
+    hsl(var(--surface)) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Stagger animation delays */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* ============================================
+   THEME TOGGLE - Star & Cloud Animation (SMALLER SIZE)
+   ============================================ */
+
+.switch {
+  font-size: 14px;
+  position: relative;
+  display: inline-block;
+  width: 3.2em;
+  height: 1.8em;
+  border-radius: 30px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #2a2a2a;
+  transition: 0.4s;
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1em;
+  width: 1em;
+  border-radius: 20px;
+  left: 0.4em;
+  bottom: 0.4em;
+  transition: 0.4s;
+  transition-timing-function: cubic-bezier(0.81, -0.04, 0.38, 1.5);
+  box-shadow: inset 6px -3px 0px 0px #ffd277;
+}
+
+.switch input:checked + .slider {
+  background-color: #00a6ff;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(1.4em);
+  box-shadow: inset 12px -3px 0px 12px #ffcf48;
+}
+
+.star {
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  width: 3px;
+  transition: all 0.4s;
+  height: 3px;
+}
+
+.star_1 {
+  left: 2em;
+  top: 0.4em;
+}
+
+.star_2 {
+  left: 1.8em;
+  top: 1em;
+}
+
+.star_3 {
+  left: 2.4em;
+  top: 0.7em;
+}
+
+.switch input:checked ~ .slider .star {
+  opacity: 0;
+}
+
+.cloud {
+  width: 2.8em;
+  position: absolute;
+  bottom: -1.1em;
+  left: -0.9em;
+  opacity: 0;
+  transition: all 0.4s;
+}
+
+.switch input:checked ~ .slider .cloud {
+  opacity: 1;
+}
+
+/* ============================================
+   MAIL LOADER ANIMATION
+   ============================================ */
+
+.loader-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 180px;
+  font-family: "Inter", sans-serif;
+  font-size: 1.2em;
+  font-weight: 300;
+  color: white;
+  border-radius: 50%;
+  background-color: transparent;
+  user-select: none;
+}
+
+.loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-color: transparent;
+  animation: loader-rotate 2s linear infinite;
+  z-index: 0;
+}
+
+@keyframes loader-rotate {
+  0% {
+    transform: rotate(90deg);
+    box-shadow:
+      0 10px 20px 0 #fff inset,
+      0 20px 30px 0 #ad5fff inset,
+      0 60px 60px 0 #471eec inset;
+  }
+  50% {
+    transform: rotate(270deg);
+    box-shadow:
+      0 10px 20px 0 #fff inset,
+      0 20px 10px 0 #d60a47 inset,
+      0 40px 60px 0 #311e80 inset;
+  }
+  100% {
+    transform: rotate(450deg);
+    box-shadow:
+      0 10px 20px 0 #fff inset,
+      0 20px 30px 0 #ad5fff inset,
+      0 60px 60px 0 #471eec inset;
+  }
+}
+
+.loader-letter {
+  display: inline-block;
+  opacity: 0.4;
+  transform: translateY(0);
+  animation: loader-letter-anim 2s infinite;
+  z-index: 1;
+  border-radius: 50ch;
+  border: none;
+}
+
+.loader-letter:nth-child(1) { animation-delay: 0s; }
+.loader-letter:nth-child(2) { animation-delay: 0.1s; }
+.loader-letter:nth-child(3) { animation-delay: 0.2s; }
+.loader-letter:nth-child(4) { animation-delay: 0.3s; }
+.loader-letter:nth-child(5) { animation-delay: 0.4s; }
+.loader-letter:nth-child(6) { animation-delay: 0.5s; }
+.loader-letter:nth-child(7) { animation-delay: 0.6s; }
+.loader-letter:nth-child(8) { animation-delay: 0.7s; }
+.loader-letter:nth-child(9) { animation-delay: 0.8s; }
+.loader-letter:nth-child(10) { animation-delay: 0.9s; }
+
+@keyframes loader-letter-anim {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  40% {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom scrollbar for light areas */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: hsl(var(--surface));
+  border-radius: 4px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}

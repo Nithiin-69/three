@@ -1,0 +1,324 @@
+/* ============================================
+   PrimeHire Design System v2.0
+   Next-Generation AI-Native Hiring Intelligence
+   ============================================ */
+
+@layer base {
+    :root {
+        /* PrimeHire Light Theme - Clean, High Contrast, Modern SaaS */
+        /* Reference: Linear, Notion */
+        
+        /* Surface Hierarchy */
+        --background: 0 0% 100%;           /* Pure white background */
+        --surface: 220 14% 98%;            /* Light grey surface */
+        --elevated: 0 0% 100%;             /* White elevated elements */
+        --overlay: 0 0% 100%;              /* White overlays */
+        
+        /* Text Contrast (AA Compliant) */
+        --foreground: 220 20% 10%;         /* Almost black text */
+        --foreground-secondary: 220 15% 35%; /* Secondary text */
+        --foreground-tertiary: 220 10% 55%; /* Tertiary text */
+        
+        /* PrimeHire Brand Colors */
+        --prime-blue: 217 91% 60%;         /* Primary brand blue */
+        --prime-purple: 262 83% 58%;       /* Accent purple */
+        --prime-cyan: 189 94% 43%;         /* Accent cyan */
+        --prime-pink: 330 81% 60%;         /* Accent pink */
+        
+        /* Semantic Colors */
+        --primary: 217 91% 60%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 220 14% 96%;
+        --secondary-foreground: 220 20% 10%;
+        --accent: 262 83% 58%;
+        --accent-foreground: 0 0% 100%;
+        
+        /* Status Colors - High Contrast */
+        --success: 142 76% 36%;            /* Green */
+        --success-bg: 142 76% 95%;
+        --warning: 38 92% 50%;             /* Orange */
+        --warning-bg: 38 92% 95%;
+        --danger: 0 84% 60%;               /* Red */
+        --danger-bg: 0 84% 95%;
+        --info: 217 91% 60%;               /* Blue */
+        --info-bg: 217 91% 95%;
+        
+        /* UI Elements */
+        --border: 220 13% 91%;
+        --border-strong: 220 13% 80%;
+        --input-bg: 0 0% 100%;
+        --input-border: 220 13% 91%;
+        --ring: 217 91% 60%;
+        
+        /* Shadows - Subtle depth */
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+        --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.16);
+        
+        /* Glassmorphism Light */
+        --glass-bg: rgba(255, 255, 255, 0.8);
+        --glass-border: rgba(220, 220, 235, 0.3);
+        --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.12);
+    }
+    
+    .dark {
+        /* PrimeHire Dark Theme - Deep Surfaces, Glowing Accents */
+        /* Reference: Vercel, Raycast */
+        
+        /* Surface Hierarchy */
+        --background: 222 47% 4%;          /* Deep navy/black */
+        --surface: 220 40% 8%;             /* Dark surface */
+        --elevated: 220 35% 12%;           /* Elevated surface */
+        --overlay: 220 30% 16%;            /* Overlay surface */
+        
+        /* Text Contrast (AA Compliant) */
+        --foreground: 210 17% 98%;         /* Almost white text */
+        --foreground-secondary: 220 15% 70%; /* Secondary text */
+        --foreground-tertiary: 220 10% 50%; /* Tertiary text */
+        
+        /* PrimeHire Brand Colors - Brighter for dark mode */
+        --prime-blue: 217 91% 65%;
+        --prime-purple: 262 83% 65%;
+        --prime-cyan: 189 94% 50%;
+        --prime-pink: 330 81% 65%;
+        
+        /* Semantic Colors */
+        --primary: 217 91% 65%;
+        --primary-foreground: 210 17% 98%;
+        --secondary: 220 35% 12%;
+        --secondary-foreground: 210 17% 98%;
+        --accent: 262 83% 65%;
+        --accent-foreground: 210 17% 98%;
+        
+        /* Status Colors - Glowing in dark */
+        --success: 142 76% 45%;
+        --success-bg: 142 76% 12%;
+        --warning: 38 92% 55%;
+        --warning-bg: 38 92% 12%;
+        --danger: 0 84% 65%;
+        --danger-bg: 0 84% 12%;
+        --info: 217 91% 65%;
+        --info-bg: 217 91% 12%;
+        
+        /* UI Elements */
+        --border: 220 30% 18%;
+        --border-strong: 220 30% 25%;
+        --input-bg: 220 35% 10%;
+        --input-border: 220 30% 18%;
+        --ring: 217 91% 65%;
+        
+        /* Shadows - Stronger in dark */
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+        --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.6);
+        --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.7);
+        --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.8);
+        
+        /* Glassmorphism Dark */
+        --glass-bg: rgba(20, 25, 35, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+        
+        /* Glow effects for dark mode */
+        --glow-primary: 0 0 20px rgba(99, 179, 237, 0.3);
+        --glow-accent: 0 0 20px rgba(167, 139, 250, 0.3);
+        --glow-success: 0 0 20px rgba(74, 222, 128, 0.3);
+        --glow-danger: 0 0 20px rgba(248, 113, 113, 0.3);
+    }
+}
+
+/* ============================================
+   Capsule UI System - Core Component Library
+   ============================================ */
+
+@layer components {
+    
+    /* 1. Pill-based Filters */
+    .capsule-filter {
+        @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium;
+        @apply transition-all duration-200 ease-in-out cursor-pointer select-none;
+        background: hsl(var(--surface));
+        border: 1px solid hsl(var(--border));
+        color: hsl(var(--foreground-secondary));
+    }
+    
+    .capsule-filter:hover {
+        border-color: hsl(var(--border-strong));
+        background: hsl(var(--elevated));
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .capsule-filter.active {
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        border-color: hsl(var(--primary));
+        box-shadow: var(--shadow-md);
+    }
+    
+    .dark .capsule-filter.active {
+        box-shadow: var(--glow-primary), var(--shadow-md);
+    }
+    
+    /* 2. Status Chips */
+    .status-chip {
+        @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold;
+        @apply transition-all duration-150;
+    }
+    
+    .status-chip.active {
+        background: hsl(var(--success-bg));
+        color: hsl(var(--success));
+        border: 1px solid hsl(var(--success) / 0.3);
+    }
+    
+    .status-chip.pending {
+        background: hsl(var(--warning-bg));
+        color: hsl(var(--warning));
+        border: 1px solid hsl(var(--warning) / 0.3);
+    }
+    
+    .status-chip.rejected {
+        background: hsl(var(--danger-bg));
+        color: hsl(var(--danger));
+        border: 1px solid hsl(var(--danger) / 0.3);
+    }
+    
+    .status-chip.hired {
+        background: hsl(var(--info-bg));
+        color: hsl(var(--info));
+        border: 1px solid hsl(var(--info) / 0.3);
+    }
+    
+    .dark .status-chip.active {
+        box-shadow: var(--glow-success);
+    }
+    
+    /* 3. Score Badges */
+    .score-badge {
+        @apply inline-flex items-center justify-center w-12 h-12 rounded-2xl text-lg font-bold;
+        @apply transition-all duration-200;
+        border: 2px solid;
+    }
+    
+    .score-badge.score-high {
+        background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success) / 0.8) 100%);
+        color: white;
+        border-color: hsl(var(--success));
+    }
+    
+    .score-badge.score-medium {
+        background: linear-gradient(135deg, hsl(var(--warning)) 0%, hsl(var(--warning) / 0.8) 100%);
+        color: white;
+        border-color: hsl(var(--warning));
+    }
+    
+    .score-badge.score-low {
+        background: linear-gradient(135deg, hsl(var(--danger)) 0%, hsl(var(--danger) / 0.8) 100%);
+        color: white;
+        border-color: hsl(var(--danger));
+    }
+    
+    .dark .score-badge.score-high {
+        box-shadow: var(--glow-success);
+    }
+    
+    /* 4. Navigation Capsules */
+    .nav-capsule {
+        @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium;
+        @apply transition-all duration-200 cursor-pointer;
+        color: hsl(var(--foreground-secondary));
+    }
+    
+    .nav-capsule:hover {
+        background: hsl(var(--surface));
+        color: hsl(var(--foreground));
+    }
+    
+    .nav-capsule.active {
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        box-shadow: var(--shadow-md);
+    }
+    
+    .dark .nav-capsule.active {
+        box-shadow: var(--glow-primary), var(--shadow-md);
+    }
+    
+    /* 5. Tag-based Interactions */
+    .tag-capsule {
+        @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium;
+        @apply transition-all duration-150 cursor-pointer;
+        background: hsl(var(--surface));
+        color: hsl(var(--foreground-secondary));
+        border: 1px solid hsl(var(--border));
+    }
+    
+    .tag-capsule:hover {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        border-color: hsl(var(--primary));
+        color: hsl(var(--primary));
+    }
+    
+    .tag-capsule.selected {
+        background: hsl(var(--primary) / 0.1);
+        color: hsl(var(--primary));
+        border-color: hsl(var(--primary));
+    }
+    
+    /* Glass Card with new design system */
+    .glass-card-prime {
+        background: hsl(var(--elevated));
+        border: 1px solid hsl(var(--border));
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glass-card-prime:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: hsl(var(--border-strong));
+    }
+    
+    .dark .glass-card-prime {
+        background: hsl(var(--surface));
+    }
+    
+    .dark .glass-card-prime:hover {
+        box-shadow: var(--shadow-xl), var(--glow-primary);
+    }
+}
+
+/* ============================================
+   Smooth Scroll Behavior
+   ============================================ */
+
+@layer utilities {
+    .smooth-scroll {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Custom scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: hsl(var(--surface));
+        border-radius: 8px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: hsl(var(--border-strong));
+        border-radius: 8px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: hsl(var(--foreground-tertiary));
+    }
+}
