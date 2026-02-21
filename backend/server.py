@@ -1371,6 +1371,99 @@ async def get_dashboard_analytics(request: Request):
     }
 
 
+@api_router.get("/analytics/detailed-reports")
+async def get_detailed_reports(request: Request):
+    user = await get_user_from_cookie(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get all screenings for this user
+    screenings = await db.screenings.find({"user_id": user.user_id}).to_list(length=None)
+    
+    # Calculate metrics
+    total_applications = len(screenings)
+    
+    # Count by status
+    status_counts = {}
+    for screening in screenings:
+        status = screening.get('status', 'new')
+        status_counts[status] = status_counts.get(status, 0) + 1
+    
+    screened = status_counts.get('new', 0) + status_counts.get('screening', 0)
+    shortlisted = status_counts.get('shortlisted', 0)
+    interviewed = status_counts.get('interviewed', 0)
+    offered = status_counts.get('offered', 0)
+    hired = status_counts.get('hired', 0)
+    rejected = status_counts.get('rejected', 0)
+    
+    # Pipeline data for funnel chart
+    pipeline_data = [
+        {"stage": "Applied", "count": total_applications},
+        {"stage": "Screened", "count": screened},
+        {"stage": "Shortlisted", "count": shortlisted},
+        {"stage": "Interviewed", "count": interviewed},
+        {"stage": "Offered", "count": offered},
+        {"stage": "Hired", "count": hired}
+    ]
+    
+    # Status distribution for pie chart
+    status_distribution = [
+        {"name": "Screening", "value": screened},
+        {"name": "Shortlisted", "value": shortlisted},
+        {"name": "Interviewed", "value": interviewed},
+        {"name": "Offered", "value": offered},
+        {"name": "Hired", "value": hired},
+        {"name": "Rejected", "value": rejected}
+    ]
+    # Filter out zero values
+    status_distribution = [s for s in status_distribution if s["value"] > 0]
+    
+    # Calculate rates
+    screening_pass_rate = round((shortlisted / screened * 100) if screened > 0 else 0, 1)
+    offer_acceptance_rate = round((hired / offered * 100) if offered > 0 else 0, 1)
+    
+    # Average time to hire (mock for now - would need timestamps)
+    avg_time_to_hire = 14  # days
+    
+    # Top jobs by application count
+    jobs_pipeline = await db.screenings.aggregate([
+        {"$match": {"user_id": user.user_id}},
+        {"$group": {
+            "_id": "$job_id",
+            "count": {"$sum": 1}
+        }},
+        {"$sort": {"count": -1}},
+        {"$limit": 10}
+    ]).to_list(length=10)
+    
+    # Enrich with job details
+    top_jobs = []
+    for job_agg in jobs_pipeline:
+        job_id = job_agg["_id"]
+        job = await db.jobs.find_one({"job_id": job_id})
+        if job:
+            top_jobs.append({
+                "title": job.get("title", "Unknown"),
+                "applications": job_agg["count"]
+            })
+    
+    return {
+        "total_applications": total_applications,
+        "screened": screened,
+        "shortlisted": shortlisted,
+        "interviewed": interviewed,
+        "offered": offered,
+        "hired": hired,
+        "rejected": rejected,
+        "pipeline_data": pipeline_data,
+        "status_distribution": status_distribution,
+        "screening_pass_rate": screening_pass_rate,
+        "offer_acceptance_rate": offer_acceptance_rate,
+        "avg_time_to_hire": avg_time_to_hire,
+        "top_jobs": top_jobs
+    }
+
+
 @api_router.get("/resumes")
 async def list_resumes(request: Request):
     user = await get_user_from_cookie(request)
