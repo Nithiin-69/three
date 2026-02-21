@@ -100,7 +100,7 @@ const DashboardPrime = () => {
               <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} /> 
               {refreshing ? 'Refreshing...' : 'Refresh'}
             </Button>
-            <Button className="bg-primary text-[#0F172A] font-semibold hover:bg-primary/90">
+            <Button className="bg-[#0F172A] text-primary font-bold hover:bg-[#1a1f2e] border-2 border-primary">
               <TrendingUp className="mr-2 h-4 w-4" /> View Reports
             </Button>
           </div>
