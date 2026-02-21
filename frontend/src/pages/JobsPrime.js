@@ -334,10 +334,6 @@ const JobsPrime = () => {
                       required
                       readOnly={viewMode}
                       disabled={viewMode}
-                    />
-                      className="w-full px-4 py-3 rounded-2xl bg-elevated border border-border focus:border-primary focus:outline-none resize-none"
-                      required
-                    />
                   </div>
 
                   <div>
@@ -350,6 +346,8 @@ const JobsPrime = () => {
                       placeholder="List specific requirements, skills, experience..."
                       rows={4}
                       className="w-full px-4 py-3 rounded-2xl bg-elevated border border-border focus:border-primary focus:outline-none resize-none"
+                      readOnly={viewMode}
+                      disabled={viewMode}
                     />
                   </div>
 
@@ -361,17 +359,19 @@ const JobsPrime = () => {
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                       className="w-full px-4 py-3 rounded-2xl bg-elevated border border-border focus:border-primary focus:outline-none cursor-pointer"
+                      disabled={viewMode}
                     >
                       <option value="active">Active</option>
                       <option value="closed">Closed</option>
                     </select>
                   </div>
 
-                  <div className="flex gap-3 pt-4">
-                    <PrimeButton type="submit">
-                      {editingJob ? 'Update Job' : 'Create Job'}
-                    </PrimeButton>
-                    <button
+                  {!viewMode && (
+                    <div className="flex gap-3 pt-4">
+                      <PrimeButton type="submit">
+                        {editingJob ? 'Update Job' : 'Create Job'}
+                      </PrimeButton>
+                      <button
                       type="button"
                       onClick={closeModal}
                       className="px-6 py-2.5 rounded-full border border-border hover:bg-elevated transition-colors text-sm font-medium"
