@@ -13,6 +13,7 @@ const JobsPrime = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
+  const [viewMode, setViewMode] = useState(false); // true = read-only, false = editable
   const [formData, setFormData] = useState({
     title: '',
     description: '',
