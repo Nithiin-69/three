@@ -1439,14 +1439,23 @@ async def create_calendar_event(event_data: CalendarEventCreate, request: Reques
     event_id = f"event_{uuid.uuid4().hex[:12]}"
     now = datetime.now(timezone.utc)
     
+    # Parse datetime strings to datetime objects
+    start_dt = event_data.start_datetime
+    if isinstance(start_dt, str):
+        start_dt = datetime.fromisoformat(start_dt.replace('Z', '+00:00'))
+    
+    end_dt = event_data.end_datetime
+    if isinstance(end_dt, str):
+        end_dt = datetime.fromisoformat(end_dt.replace('Z', '+00:00'))
+    
     event_doc = {
         "event_id": event_id,
         "user_id": user.user_id,
         "title": event_data.title,
         "description": event_data.description,
         "event_type": event_data.event_type,
-        "start_datetime": event_data.start_datetime,
-        "end_datetime": event_data.end_datetime,
+        "start_datetime": start_dt,
+        "end_datetime": end_dt,
         "location": event_data.location,
         "candidate_name": event_data.candidate_name,
         "candidate_email": event_data.candidate_email,
