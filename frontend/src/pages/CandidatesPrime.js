@@ -151,32 +151,36 @@ const Candidates = () => {
     );
   };
 
-  // Update candidate status
+  // Update candidate status - SMART UPDATE without page refresh
   const updateCandidateStatus = async (candidateId, newStatus) => {
+    // Store original status for rollback
+    const originalCandidates = [...candidates];
+    
     try {
       setUpdatingStatus(true);
       
+      // 1. OPTIMISTIC UPDATE - Update UI immediately
+      setCandidates(prevCandidates => 
+        prevCandidates.map(candidate => 
+          candidate._id === candidateId 
+            ? { ...candidate, status: newStatus }
+            : candidate
+        )
+      );
+      
+      // 2. Update backend
       await apiClient.post('/screenings/bulk-update-status', {
         screening_ids: [candidateId],
         status: newStatus
       });
       
-      // Immediately update local state for instant UI feedback
-      setCandidates(prevCandidates => 
-        prevCandidates.map(c => 
-          c._id === candidateId ? { ...c, status: newStatus } : c
-        )
-      );
-      
       toast.success(`Status updated to ${newStatus}`);
       
-      // Then reload to ensure consistency
-      await loadData();
     } catch (error) {
       console.error('Status update failed:', error);
+      // ROLLBACK on error - restore original state
+      setCandidates(originalCandidates);
       toast.error(error.response?.data?.detail || 'Failed to update status');
-      // Reload on error to revert to correct state
-      await loadData();
     } finally {
       setUpdatingStatus(false);
     }
