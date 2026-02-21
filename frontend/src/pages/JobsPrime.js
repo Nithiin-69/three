@@ -294,7 +294,7 @@ const JobsPrime = () => {
               >
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-foreground">
-                    {editingJob ? 'Edit Job' : 'Create New Job'}
+                    {viewMode ? 'View Job' : editingJob ? 'Edit Job' : 'Create New Job'}
                   </h2>
                   <button
                     onClick={closeModal}
@@ -316,6 +316,8 @@ const JobsPrime = () => {
                       placeholder="e.g. Senior Full Stack Developer"
                       className="w-full px-4 py-3 rounded-2xl bg-elevated border border-border focus:border-primary focus:outline-none"
                       required
+                      readOnly={viewMode}
+                      disabled={viewMode}
                     />
                   </div>
 
@@ -328,6 +330,11 @@ const JobsPrime = () => {
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       placeholder="Describe the role, responsibilities, and what you're looking for..."
                       rows={6}
+                      className="w-full px-4 py-3 rounded-2xl bg-elevated border border-border focus:border-primary focus:outline-none resize-none"
+                      required
+                      readOnly={viewMode}
+                      disabled={viewMode}
+                    />
                       className="w-full px-4 py-3 rounded-2xl bg-elevated border border-border focus:border-primary focus:outline-none resize-none"
                       required
                     />
