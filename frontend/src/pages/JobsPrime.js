@@ -372,13 +372,14 @@ const JobsPrime = () => {
                         {editingJob ? 'Update Job' : 'Create Job'}
                       </PrimeButton>
                       <button
-                      type="button"
-                      onClick={closeModal}
-                      className="px-6 py-2.5 rounded-full border border-border hover:bg-elevated transition-colors text-sm font-medium"
-                    >
-                      Cancel
-                    </button>
-                  </div>
+                        type="button"
+                        onClick={closeModal}
+                        className="px-6 py-2.5 rounded-full border border-border hover:bg-elevated transition-colors text-sm font-medium"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
                 </form>
               </motion.div>
             </motion.div>
