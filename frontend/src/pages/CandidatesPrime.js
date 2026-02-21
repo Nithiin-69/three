@@ -435,12 +435,47 @@ const Candidates = () => {
                               setShowDetailModal(true);
                             }}
                             className="p-2 hover:bg-surface rounded-full transition-colors"
+                            title="View Details"
                           >
                             <Eye className="w-4 h-4 text-foreground-secondary" />
                           </button>
-                          <button className="p-2 hover:bg-surface rounded-full transition-colors">
-                            <Mail className="w-4 h-4 text-foreground-secondary" />
+                          <button 
+                            onClick={() => navigate(`/emails?candidate=${candidate._id}`)}
+                            className="p-2 hover:bg-surface rounded-full transition-colors"
+                            title="Send Email"
+                          >
+                            <Mail className="w-4 h-4 text-foreground-secondary hover:text-primary" />
                           </button>
+                          <div className="relative">
+                            <button 
+                              onClick={() => setShowStatusMenu(showStatusMenu === candidate._id ? null : candidate._id)}
+                              className="p-2 hover:bg-surface rounded-full transition-colors"
+                              title="Change Status"
+                            >
+                              <MoreVertical className="w-4 h-4 text-foreground-secondary" />
+                            </button>
+                            
+                            {showStatusMenu === candidate._id && (
+                              <div className="absolute right-0 mt-2 w-48 bg-elevated border border-border rounded-2xl shadow-lg z-50 py-2">
+                                <div className="px-3 py-2 text-xs font-medium text-foreground-secondary border-b border-border">
+                                  Change Status
+                                </div>
+                                {['screening', 'shortlisted', 'interview', 'offer', 'hired', 'rejected'].map((status) => (
+                                  <button
+                                    key={status}
+                                    onClick={() => updateCandidateStatus(candidate._id, status)}
+                                    disabled={updatingStatus || candidate.status === status}
+                                    className={`w-full text-left px-4 py-2 text-sm hover:bg-surface transition-colors flex items-center gap-2 ${
+                                      candidate.status === status ? 'text-primary font-medium' : 'text-foreground'
+                                    } ${updatingStatus ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                  >
+                                    {candidate.status === status && <Check className="w-3 h-3" />}
+                                    <span className="capitalize">{status}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </motion.tr>
