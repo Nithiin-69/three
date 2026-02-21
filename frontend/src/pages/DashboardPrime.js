@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Users, Briefcase, TrendingUp, Clock, Calendar, Activity, 
   CheckCircle, XCircle, PieChart as PieChartIcon, BarChart3,
-  Filter, MoreHorizontal, ArrowUpRight
+  Filter, MoreHorizontal, ArrowUpRight, ArrowRight
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
