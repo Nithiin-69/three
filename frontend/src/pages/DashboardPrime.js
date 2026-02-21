@@ -180,7 +180,7 @@ const DashboardPrime = () => {
                     No upcoming interviews
                   </div>
                 )}
-                <Button variant="ghost" className="w-full text-xs" size="sm">
+                <Button variant="ghost" className="w-full text-xs" size="sm" onClick={() => navigate('/calendar')}>
                   View Calendar <ArrowRight className="ml-2 h-3 w-3" />
                 </Button>
               </div>

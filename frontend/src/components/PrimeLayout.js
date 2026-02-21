@@ -156,8 +156,8 @@ const PrimeLayout = ({ children }) => {
             <ThemeTogglePrime />
           </div>
 
-          {/* Settings */}
-          <button
+          {/* Settings - REMOVED per request */}
+          {/* <button
             onClick={() => navigate('/settings')}
             className={`
               w-full rounded-full px-4 py-3 flex items-center gap-3
@@ -168,7 +168,7 @@ const PrimeLayout = ({ children }) => {
           >
             <Settings className="w-5 h-5 flex-shrink-0" />
             {!collapsed && <span className="text-sm font-medium">Settings</span>}
-          </button>
+          </button> */}
 
           {/* User Profile */}
           <button
