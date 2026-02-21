@@ -76,7 +76,7 @@ const ReportsPrime = () => {
               <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
               {refreshing ? 'Refreshing...' : 'Refresh'}
             </Button>
-            <Button className="bg-[#0F172A] text-primary font-bold hover:bg-[#1a1f2e] border-2 border-primary">
+            <Button className="bg-primary text-background font-bold hover:bg-primary/90 border-2 border-primary">
               <Download className="mr-2 h-4 w-4" /> Export Report
             </Button>
           </div>
