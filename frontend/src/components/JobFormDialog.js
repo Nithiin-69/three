@@ -75,7 +75,7 @@ const JobFormDialog = ({ open, onOpenChange, job, onSaved }) => {
           max: '',
           currency: 'USD'
         },
-        status: 'draft'
+        status: 'active'
       });
     }
   }, [job, open]);
