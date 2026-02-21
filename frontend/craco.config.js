@@ -78,6 +78,13 @@ if (config.enableVisualEdits && babelMetadataPlugin) {
 }
 
 webpackConfig.devServer = (devServerConfig) => {
+  // Fix "Invalid Host header" error - allow all hosts
+  devServerConfig.allowedHosts = 'all';
+  devServerConfig.client = {
+    ...devServerConfig.client,
+    webSocketURL: 'auto://0.0.0.0:0/ws'
+  };
+  
   // Apply visual edits dev server setup only if enabled
   if (config.enableVisualEdits && setupDevServer) {
     devServerConfig = setupDevServer(devServerConfig);
