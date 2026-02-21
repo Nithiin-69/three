@@ -307,9 +307,16 @@ const ScreeningPrime = () => {
                                       Match: {result.match_score}%
                                     </Badge>
                                   </div>
-                                </div>
                               </div>
-                              <Button variant="ghost" size="icon">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => {
+                                  setSelectedCandidate(result);
+                                  // Could navigate to candidate details or show modal
+                                  toast.info('View candidate details');
+                                }}
+                              >
                                 <ChevronRight className="h-5 w-5" />
                               </Button>
                             </div>
