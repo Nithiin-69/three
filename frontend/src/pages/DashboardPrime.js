@@ -28,8 +28,10 @@ const STATUS_COLORS = {
 };
 
 const DashboardPrime = () => {
+  const navigate = useNavigate();
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -37,13 +39,18 @@ const DashboardPrime = () => {
 
   const loadDashboardData = async () => {
     try {
+      setRefreshing(true);
       const res = await apiClient.get('/analytics/dashboard');
       setMetrics(res.data);
+      if (!loading) {
+        toast.success('Dashboard refreshed');
+      }
     } catch (error) {
       console.error('Failed to load dashboard', error);
       toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
